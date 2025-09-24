@@ -1,0 +1,33 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: bisque;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+main{
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+h1{
+    color: brown;
+    padding: 3%;
+}
+img{
+    max-width: 100%;
+    width: 85%;
+    display: block;
+    margin: auto;
+}
+button{
+    margin-top: 3%;
+    margin-bottom: 3%;
+    padding: 2%;
+    border-radius: 20px;
+}
