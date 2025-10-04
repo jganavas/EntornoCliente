@@ -1,16 +1,13 @@
 let nums = [];
 
-//ARRAY COMPROBACION CODIGO
-let numeros = [20, 5, 7, 4, 32, 9, 2, 14, 11, 6];
-
-/*for(let i = 0; i < 10; i++){
+for(let i = 0; i < 10; i++){
     nums[i] = prompt(`Introduce el número ${i+1}: `);
     if(nums[i] < 0){
         nums[i] = prompt("Introduce un valor válido");
     }
-}*/
+}
 
-/*let valores = "";
+let valores = "";
 for(let i = 0; i < 10; i++){
     valores += `Valor: ${nums[i]}  (Índice ${i})\n`;
 }
@@ -25,31 +22,35 @@ while(!valido){
     inicial = prompt("Introduce inicial");
     final = prompt("Introduce final");
 } 
-*/
 
-//VARIABLES COMPROBACION
+let aux = nums[9];
+nums.splice(final, 0, nums[inicial]);
+nums.splice(inicial, 1);
+nums.unshift(aux);
+
+valores = "";
+for(let i = 0; i < 10; i++){
+    valores += `Valor: ${nums[i]}  (Índice ${i})\n`;
+}
+alert(`Resultado: ${valores}`);
+
+/*COMPROBACION CÓDIGO
+let numeros = [20, 5, 7, 4, 32, 9, 2, 14, 11, 6];
+
 let inicial = 3;
 let final = 7;
 
-
 let aux = numeros[9];
-numeros.splice(final, 0, inicial+1);
+numeros.splice(final, 0, numeros[inicial]);
 numeros.splice(inicial, 1);
 numeros.unshift(aux);
 
-//COMPROBACION CÓDIGO
 let valores = "";
 for(let i = 0; i < 10; i++){
     valores += `Valor: ${numeros[i]}  (Índice ${i})\n`;
 }
 console.log(valores);    
-
-
-/*valores = "";
-for(let i = 0; i < 10; i++){
-    valores += `Valor: ${nums[i]}  (Índice ${i})\n`;
-}
-alert(`Resultado: ${valores}`);*/
+*/
 
 
 

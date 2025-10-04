@@ -34,7 +34,7 @@ while(comensales != 0){
         }
     }
     if(!encontrada){
-        alert("No hay mesas, por favor váyase a su casa queremos cerrar y descansar.");
+        alert("No hay mesas, váyase a su casa por favor queremos cerrar y descansar.");
         break;
     }
 }
