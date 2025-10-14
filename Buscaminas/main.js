@@ -39,7 +39,9 @@ function contarMinasAdyacentes(tablero, fila, columna){
 
     let count = 0;
     for (let i = fila-1; i <= fila+1; i++) {
+      if(i < 0 || i > tablero[i].length) continue;
       for (let j = columna-1; j <= columna+1; j++) {
+        if(j < 0 || j > tablero[i].length);
         if(tablero[i][j] == "*"){
             count++;
         }
@@ -48,38 +50,84 @@ function contarMinasAdyacentes(tablero, fila, columna){
     return count;
 }
 
+//FUNCION mostrarCasillas (funcional) SIN RECURSIVIDAD
+/*
 function mostrarCasillasAdyacentes(tablero, fila, columna){
 
-    let count = 0;
-    for (let i = fila-1; i <= fila+1; i++) {
-      for (let j = columna-1; j <= columna+1; j++) {
-        if(tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "0" || tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "*"){
-            tablero[fila][columna] = contarMinasAdyacentes(tablero, fila, columna);
-        }else{
-            tablero[i][j] = contarMinasAdyacentes(tablero, i, j);
+    let explosion = false;
+
+    if(tablero[fila][columna] == "*"){
+        explosion = true;
+    }else{
+        let count = 0;
+        for (let i = fila-1; i <= fila+1; i++) {
+            for (let j = columna-1; j <= columna+1; j++) {
+                if(tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "0" || tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "*"){
+                    tablero[fila][columna] = contarMinasAdyacentes(tablero, fila, columna);
+                }else{
+                    tablero[i][j] = contarMinasAdyacentes(tablero, i, j);
+                }      
+            }
         }
-        
-      }
     }
-    return tablero; 
+    if(explosion){
+        return "BOOM";
+    }else{
+        return tablero;
+    }  
 }
+*/
+
+function mostrarCasillasAdyacentes(tablero, fila, columna){
+
+    let explosion = false;
+
+    if(tablero[fila][columna] == "*"){
+        explosion = true;
+    }else{
+        let count = 0;
+        for (let i = fila-1; i <= fila+1; i++) {
+            if(i < 0 || i > tablero[i].length) continue;
+            for (let j = columna-1; j <= columna+1; j++) {
+                if(j < 0 || j > tablero[i].length);
+                if(tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "*"){
+                    tablero[fila][columna] = contarMinasAdyacentes(tablero, fila, columna);
+                }else if(tablero[i][j] == contarMinasAdyacentes(tablero, fila, columna) == "0"){
+                    tablero[i][j] = mostrarCasillasAdyacentes(tablero, i, j);
+                }else{
+                    tablero[i][j] = contarMinasAdyacentes(tablero, i, j);
+                }      
+            }
+        }
+    }
+    if(explosion){
+        return "BOOM";
+    }else{
+        return tablero;
+    }  
+}
+
 let tablerov = generarTablero(5);
 tablerov = colocarMinas(tablerov, 4);
+console.log("TABLERO BASE: \n");
 console.table(tablerov);
+console.log("TABLERO ADMIN (jugando): \n");
 console.table(mostrarCasillasAdyacentes(tablerov, 2, 2));
 
 function mostrarTablero(tablero, fila, columna){
     let copiaTablero = [...tablero];
-    copiaTablero = contarMinasAdyacentes(copiaTablero, fila, columna);
+    //copiaTablero = contarMinasAdyacentes(copiaTablero, fila, columna);
     for (let i = 0; i < tablero.length; i++) {
       for (let j = 0; j <= tablero[i].length; j++) {
-        if(tablero[i][j] == "*" || tablero[i][j] == "0"){
+        if(tablero[i][j] == "*" || tablero[i][j] === "0"){
             copiaTablero[i][j] = "#";
         }
       }
     }
     return copiaTablero;
 }
+console.log("TABLERO USUARIO: \n");
+console.table(mostrarTablero(tablerov, 2, 2));
 
 function jugar(tablero, fila, columna){
     if(tablero[fila][columna] == "*"){
@@ -90,6 +138,7 @@ function jugar(tablero, fila, columna){
     return explosion;
 }
 
+/*
 //JUEGO
 let tamanio = prompt("Introduce el tamaño del tablero");
 let tablero = generarTablero(tamanio);
@@ -106,3 +155,4 @@ while(!explosion){
         explosion = true;
     }
 }
+*/
