@@ -39,11 +39,11 @@ function contarMinasAdyacentes(tablero, fila, columna){
 
     let count = 0;
     for (let i = fila-1; i <= fila+1; i++) {
-      if(i < 0 || i > tablero[i].length){
+      if(i < 0 || i >= tablero.length){
         continue;
       } 
       for (let j = columna-1; j <= columna+1; j++) {
-        if(j < 0 || j > tablero[i].length){
+        if(j < 0 || j >= tablero.length){
             continue;
         } 
         if(tablero[i][j] == "*"){
@@ -55,50 +55,39 @@ function contarMinasAdyacentes(tablero, fila, columna){
 }
 
 function mostrarCasillasAdyacentes(tablero, fila, columna){
-
-    let explosion = false;
-
-    if(tablero[fila][columna] == "*"){
-        explosion = true;
-    }else{
-        let count = 0;
-        //BUCLE FILAS
-        for (let i = fila-1; i <= fila+1; i++) {
+    let count = 0;
+    //BUCLE FILAS
+    for (let i = fila-1; i <= fila+1; i++) {
+        //MANTIENE ITERACIONES DENTRO DEL TABLERO
+        if(i < 0 || i >= tablero.length){
+            i--;
+            continue;
+        } 
+        //BUCLE COLUMNAS
+        for (let j = columna-1; j <= columna+1; j++) {
             //MANTIENE ITERACIONES DENTRO DEL TABLERO
-            if(i < 0 || i > tablero[i].length){
-                i--;
+            if(j < 0 || j >= tablero.length){
+                j--;
                 continue;
-            } 
-            //BUCLE COLUMNAS
-            for (let j = columna-1; j <= columna+1; j++) {
-                //MANTIENE ITERACIONES DENTRO DEL TABLERO
-                if(j < 0 || j > tablero[i].length){
-                    j--;
-                    continue;
-                }
-                //LOGICA Y FUNCIONAMIENTO
-                //Si la casilla no tiene bomba pero sí tiene una en su radio, se desvela sólo ella
-                if(tablero[fila][columna] != "*" && contarMinasAdyacentes(tablero, fila, columna) != "0"){
-                    tablero[fila][columna] = contarMinasAdyacentes(tablero, fila, columna);
-                    break;
-                //Si no contiene ninguna bomba en su radio, desvela el radio    
-                }else if(contarMinasAdyacentes(tablero, fila, columna) == "0"){
-                    tablero[i][j] = contarMinasAdyacentes(tablero, i, j);
-                }else if(tablero[i][j] == "*"){
-                    j--;
-                    continue;
-                //Si desvelando encuentra una casilla solitaria, vuelve a revelar su radio
-                }else if(tablero[i][j] == "0"){
-                    tablero = mostrarCasillasAdyacentes(tablero, i, j);
-                }     
             }
+            //LOGICA Y FUNCIONAMIENTO
+            //Si la casilla no tiene bomba pero sí tiene una en su radio, se desvela sólo ella
+            if(tablero[fila][columna] != "*" && contarMinasAdyacentes(tablero, fila, columna) != "0"){
+                tablero[fila][columna] = contarMinasAdyacentes(tablero, fila, columna);
+                break;
+            //Si no contiene ninguna bomba en su radio, desvela el radio    
+            }else if(contarMinasAdyacentes(tablero, fila, columna) == "0"){
+                tablero[i][j] = contarMinasAdyacentes(tablero, i, j);
+            }else if(tablero[i][j] == "*"){
+                j--;
+                continue;
+            //Si desvelando encuentra una casilla solitaria, vuelve a revelar su radio
+            }else if(tablero[i][j] == "0"){
+                tablero = mostrarCasillasAdyacentes(tablero, i, j);
+            }     
         }
     }
-    if(explosion){
-        return "BOOM";
-    }else{
-        return tablero;
-    }  
+    return tablero;
 }
 /*
 let tablerov = generarTablero(5);
@@ -108,10 +97,14 @@ console.table(tablerov);
 console.log("TABLERO ADMIN (jugando): \n");
 console.table(mostrarCasillasAdyacentes(tablerov, 2, 2));
 */
-function mostrarTablero(tablero, fila, columna){
-    let copiaTablero = [...tablero];
+function mostrarTablero(tablero){
+    let copiaTablero = [];
     for (let i = 0; i < tablero.length; i++) {
-      for (let j = 0; j <= tablero[i].length; j++) {
+        copiaTablero[i] = [...tablero[i]];
+    }
+
+    for (let i = 0; i < tablero.length; i++) {
+      for (let j = 0; j < tablero[i].length; j++) {
         if(tablero[i][j] == "*" || tablero[i][j] === "0"){
             copiaTablero[i][j] = "X";
         }
@@ -124,8 +117,6 @@ console.log("TABLERO USUARIO: \n");
 console.table(mostrarTablero(tablerov, 2, 2));
 */
 function jugar(){
-
-    let partidaAcabada = false;
     //JUEGO
     let tamanio = prompt("Introduce el tamaño del tablero");
     let tablero = generarTablero(tamanio);
@@ -137,8 +128,11 @@ function jugar(){
     while(!explosion){
         let fila = prompt("Introduce posición X");
         let columna = prompt("Introduce posición Y");
-        console.table(mostrarCasillasAdyacentes(tablero, fila, columna));
-        console.table(mostrarTablero(tablero, fila, columna));
+
+        tablero = mostrarCasillasAdyacentes(tablero, fila, columna);
+        //console.table(mostrarCasillasAdyacentes(tablero, fila, columna));
+        console.table(mostrarTablero(tablero));
+
         if(tablero[fila][columna] == "*"){
             explosion = true;
         }
