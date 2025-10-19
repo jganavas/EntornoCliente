@@ -46,7 +46,7 @@ function generarTableroAdmin(tablero){
             }
             let cont = 0;
 
-            //Para cada columna, vuelvo a recorrer su alrededor
+            //LOGICA PARA ASIGNAR A CADA CELDA SU NUMERO CORRESPONDIENTE
             for (let k = -1; k <= 1; k++) {
                 for (let r = -1; r <= 1; r++) {
                     //Ignoro la celda en la que se acciona el bucle
@@ -57,8 +57,8 @@ function generarTableroAdmin(tablero){
                     let fila = i + k;
                     let columna = j + r;
 
-                    if (fila >= 0 && fila < tablero.length && columna >= 0 && columna < tablero.length) {
-                        if (tablero[fila][columna] === "*") {
+                    if (fila >= 0 && fila < tablero.length && columna >= 0 && columna < tablero.length){
+                        if(tablero[fila][columna] == "*"){
                             cont++;
                         }
                     }
@@ -111,18 +111,25 @@ function generarTableroCopia(tamano){
 
 function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
 
-    //Uso valor booleano para controlar el estado de la partida
-    if(tablero[fila][columna] == "*"){
-        return true;
-    }
-    //Si ya ha sido desvelada, paro
-    if(tableroCopia[fila][columna] != "X"){
+    let filaCorrecta = fila >= 0 && fila < tablero.length && !isNaN(fila);
+    let columnaCorrecta = columna >= 0 && columna < tablero.length && !isNaN(columna);
+
+    //CONDICION DE SALIDA RECURSIVDAD
+    if(!filaCorrecta || !columnaCorrecta){
         return;
     }
 
-    //Si tiene minas alrededor revelo el número de minas adyacentes
+    //CONDICION DE SALIDA RECURSIVIDAD
+    if(tableroCopia[fila][columna] != "X"){
+        return;
+    }
+    
+    tableroCopia[fila][columna] = tablero[fila][columna];
+
+    //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
     if(tablero[fila][columna] != "0"){
         tableroCopia[fila][columna] = tablero[fila][columna];
+    //Si es una celda solitaria, revelo su alreddor
     }else if(tablero[fila][columna] == "0"){
 
         for (let i = fila-1; i <= fila+1; i++) {
@@ -139,22 +146,86 @@ function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
                 if(i == fila && j == columna){
                     continue;
                 }
-                //Revelo posiciones mientras no sea una mina, de otra forma continúo  
-                if(tablero[i][j] != "*"){
-                    tableroCopia[i][j] = tablero[i][j];
-                    mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
-                }else{
-                    continue;
-                }               
+                
+                mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
             }
         }
     }
 }
 
+function mostrarTablero(tableroCopia){
+    console.table(tableroCopia);
+}
+
+function esVictoria(tablero, tableroCopia){
+
+    let esVictoria = true;
+
+    for(let i = 0; i < tablero.length; i++){
+        for(let j = 0; j < tablero.length; j++){
+            if(tablero[i][j] != "*" && tableroCopia[i][j] == "X"){
+                return false;
+            }
+        }
+    }
+    return esVictoria;
+}
+
+function jugar(){
+
+    //Valores iniciales
+    let tamano = parseInt(prompt("Introduce tamano del tablero"));
+    let minas = parseInt(prompt("Introduce numero de minas"));
+
+    //Variables de tablero
+    let tablero = generarTablero(tamano);
+    tablero = colocarMinas(tablero, minas);
+    tablero = generarTableroAdmin(tablero);
+    tableroCopia = generarTableroCopia(tamano);
+
+    //Bucle de juego
+    let explosion = false;
+    while(!explosion){
+
+        let fila = parseInt(prompt("Introduce fila"));
+        let columna = parseInt(prompt("Introduce columna"));
+
+        let filaCorrecta = fila >= 0 && fila < tamano && !isNaN(fila);
+        let columnaCorrecta = columna >= 0 && columna < tamano && !isNaN(columna);
+
+        if(!filaCorrecta || !columnaCorrecta){
+            alert("Introduce valores válidos");
+            continue;
+        }
+
+        if(tableroCopia[fila][columna] != "X"){
+            alert("Este valor ya ha sido utilizado");
+            continue;
+        }
+
+        if(tablero[fila][columna] == "*"){
+            alert("BOOM");
+            explosion = true;   
+            mostrarTablero(tablero);
+            console.log("Fueras estudiao");       
+        }else{
+            mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna);
+            mostrarTablero(tableroCopia);
+
+            if(esVictoria(tablero, tableroCopia)){
+                alert("Has ganado :)");
+                break;
+            }
+        }
+    }
+}
+jugar();
+
+/*
 tablero = generarTablero(5);
 tablero = colocarMinas(tablero, 4);
 tablero = generarTableroAdmin(tablero);
 console.table(tablero);
 tableroJugador = generarTableroCopia(5);
 mostrarCasillasAdyacentes(tablero, tableroJugador, 2, 2);
-console.table(tableroJugador);
+console.table(tableroJugador);*/
