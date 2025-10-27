@@ -1,4 +1,4 @@
-let nums = [];
+/*let nums = [];
 
 for(let i = 0; i < 10; i++){
     nums[i] = prompt(`Introduce el número ${i+1}: `);
@@ -33,8 +33,9 @@ for(let i = 0; i < 10; i++){
     valores += `Valor: ${nums[i]}  (Índice ${i})\n`;
 }
 alert(`Resultado: ${valores}`);
+*/
 
-/*COMPROBACION CÓDIGO
+//COMPROBACION CÓDIGO
 let numeros = [20, 5, 7, 4, 32, 9, 2, 14, 11, 6];
 
 let inicial = 3;
@@ -50,7 +51,7 @@ for(let i = 0; i < 10; i++){
     valores += `Valor: ${numeros[i]}  (Índice ${i})\n`;
 }
 console.log(valores);    
-*/
+
 
 
 
