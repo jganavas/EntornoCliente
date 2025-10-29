@@ -42,21 +42,34 @@ const calcularPromedio = (notas) => {
 // TODO 2: Usa .map() para crear un array con el promedio de cada estudiante
 // Formato: [{ nombre: "Ana", promedio: 8.5 }, ...]
 
-let promedios = estudiantes.map(...calcularPromedio);
+estudiantes.forEach(estudiante => {
+    let promedio = calcularPromedio(estudiante.notas);
+    estudiante["media"] = promedio;
+});
+
+estudiantes.forEach(estudiante => {console.log(estudiante.nombre, estudiante.media)});
 
 
 // TODO 3: Usa .filter() para obtener solo estudiantes con promedio >= 8
 
+let sobresalientes = estudiantes.filter(estudiante => estudiante.media >= 8);
+console.log(sobresalientes);
 
 // TODO 4: Usa .find() para encontrar al estudiante con mejor promedio
 // Pista: Primero calcula los promedios, luego usa Math.max()
 
+let mejorEstudiante = estudiantes.find(estudiante => estudiante.media = Math.max(estudiante.media));
+console.log(mejorEstudiante);
 
 // TODO 5: Usa .some() para verificar si algún estudiante tiene promedio perfecto (10)
 
+let estudiantePerfecto = estudiantes.some(estudiante => estudiante.media === 10);
+console.log(estudiantePerfecto);
 
 // TODO 6: Usa .every() para verificar si todos los estudiantes son mayores de edad (>=18)
 
+let sonMayoresDeEdad = estudiantes.every(estudiante => estudiante.edad >= 18);
+console.log(sonMayoresDeEdad);
 
 // ==========================================
 // 🔥 DESAFÍO 2: GESTIÓN DE PRODUCTOS
@@ -73,9 +86,17 @@ const productos = [
 
 // TODO 7: Filtra productos que tengan stock disponible (stock > 0)
 
+let productos_filtrados = productos.filter(producto => producto.stock > 0);
+console.log(productos_filtrados);
 
 // TODO 8: Crea un array con los nombres de productos en mayúsculas usando .map()
 
+let nombresCaps = productos.map(producto => 
+    {
+        producto.nombre = producto.nombre.toUpperCase;
+    }
+);
+console.log(nombresCaps);
 
 // TODO 9: Calcula el valor total del inventario (precio * stock de cada producto) usando .reduce()
 // Pista: productos.reduce((total, producto) => total + (producto.precio * producto.stock), 0)
@@ -84,9 +105,18 @@ const productos = [
 //   - En cada iteración: suma (precio * stock) al acumulador
 //   - Resultado final: suma total de todos los valores
 
+const valorTotal = (objeto) => {
+    return objeto.reduce((suma, objeto) => suma + (objeto.precio * objeto.stock), 0);
+};
+console.log(valorTotal(productos));
 
 // TODO 10: Verifica si todos los productos cuestan más de 20€ usando .every()
 
+const superior20Euros = (objeto) => {
+    return objeto.every(producto => producto.precio > 20);
+};
+
+console.log(superior20Euros(productos));
 
 // ==========================================
 // 🔥 DESAFÍO 3: DESESTRUCTURACIÓN
@@ -99,8 +129,14 @@ const personas = [
 ];
 
 // TODO 11: Usa desestructuración para extraer nombre y edad del primer objeto
-// const { nombre, edad } = personas[0];
-// console.log(nombre, edad); // "Ana" 25
+//const { nombre, edad } = personas[0];
+//console.log(nombre, edad); // "Ana" 25
+
+const obtenerNombreEdad = (persona) => {
+    let {nombre, edad} = persona;
+    return {nombre, edad};
+};
+console.log(obtenerNombreEdad(personas[0]));
 
 
 // TODO 12: Crea una función que use desestructuración en los parámetros
@@ -110,7 +146,8 @@ const personas = [
 
 // TODO 13: Usa .map() con desestructuración para crear un array de presentaciones
 // const presentaciones = personas.map(({ nombre, ciudad }) => `${nombre} vive en ${ciudad}`);
-
+const presentaciones = personas.map(({ nombre, ciudad }) => `${nombre} vive en ${ciudad}`);
+console.log(presentaciones);
 
 // TODO 14: Desestructura un array de números
 // const numeros = [10, 20, 30, 40, 50];
@@ -135,9 +172,26 @@ const frases = [
 // Resultado: [["JavaScript", "es", "genial"], [...], ...]
 // Pista: frase.split(" ")
 
+const frasesArray = frases.map(frase => frase.split(" "));
+
+function convertirString_Array(frases){
+    let array = frases.map(frase => frase.split(" "));
+    return array;
+};
+console.log(frasesArray);
+console.log(convertirString_Array(frases));
 
 // TODO 16: Encuentra la primera frase que contiene "flecha" usando .find()
 // Pista: frase.includes("flecha")
+
+const primeraFrase = (array, palabra) => {
+    let frase = array.find(frase => {
+        frase.includes(palabra);
+    });
+    return frase;
+};
+
+console.log(primeraFrase("flecha"));
 
 
 // TODO 17: Filtra solo las frases que contengan la palabra "es"
@@ -247,4 +301,3 @@ console.log("transformar([1,2,3], n => n * 2):", transformar([1,2,3], n => n * 2
 4. Usa console.log() para debuggear paso a paso
 5. Combinar métodos es muy potente: .filter().map().reduce()
 */
-console.log("Promedios:", promedios);
