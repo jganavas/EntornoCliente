@@ -47,29 +47,25 @@ estudiantes.forEach(estudiante => {
     estudiante["media"] = promedio;
 });
 
-estudiantes.forEach(estudiante => {console.log(estudiante.nombre, estudiante.media)});
+//estudiantes.forEach(estudiante => {console.log(estudiante.nombre, estudiante.media)});
 
 
 // TODO 3: Usa .filter() para obtener solo estudiantes con promedio >= 8
 
 let sobresalientes = estudiantes.filter(estudiante => estudiante.media >= 8);
-console.log(sobresalientes);
 
 // TODO 4: Usa .find() para encontrar al estudiante con mejor promedio
 // Pista: Primero calcula los promedios, luego usa Math.max()
 
 let mejorEstudiante = estudiantes.find(estudiante => estudiante.media = Math.max(estudiante.media));
-console.log(mejorEstudiante);
 
 // TODO 5: Usa .some() para verificar si algún estudiante tiene promedio perfecto (10)
 
 let estudiantePerfecto = estudiantes.some(estudiante => estudiante.media === 10);
-console.log(estudiantePerfecto);
 
 // TODO 6: Usa .every() para verificar si todos los estudiantes son mayores de edad (>=18)
 
 let sonMayoresDeEdad = estudiantes.every(estudiante => estudiante.edad >= 18);
-console.log(sonMayoresDeEdad);
 
 // ==========================================
 // 🔥 DESAFÍO 2: GESTIÓN DE PRODUCTOS
@@ -87,16 +83,13 @@ const productos = [
 // TODO 7: Filtra productos que tengan stock disponible (stock > 0)
 
 let productos_filtrados = productos.filter(producto => producto.stock > 0);
-console.log(productos_filtrados);
 
 // TODO 8: Crea un array con los nombres de productos en mayúsculas usando .map()
 
-let nombresCaps = productos.map(producto => 
-    {
-        producto.nombre = producto.nombre.toUpperCase;
+let nombresCaps = productos.map(producto => {
+        producto.nombre.toUpperCase();
     }
 );
-console.log(nombresCaps);
 
 // TODO 9: Calcula el valor total del inventario (precio * stock de cada producto) usando .reduce()
 // Pista: productos.reduce((total, producto) => total + (producto.precio * producto.stock), 0)
@@ -108,7 +101,6 @@ console.log(nombresCaps);
 const valorTotal = (objeto) => {
     return objeto.reduce((suma, objeto) => suma + (objeto.precio * objeto.stock), 0);
 };
-console.log(valorTotal(productos));
 
 // TODO 10: Verifica si todos los productos cuestan más de 20€ usando .every()
 
@@ -116,7 +108,6 @@ const superior20Euros = (objeto) => {
     return objeto.every(producto => producto.precio > 20);
 };
 
-console.log(superior20Euros(productos));
 
 // ==========================================
 // 🔥 DESAFÍO 3: DESESTRUCTURACIÓN
@@ -136,7 +127,6 @@ const obtenerNombreEdad = (persona) => {
     let {nombre, edad} = persona;
     return {nombre, edad};
 };
-console.log(obtenerNombreEdad(personas[0]));
 
 
 // TODO 12: Crea una función que use desestructuración en los parámetros
@@ -147,7 +137,6 @@ console.log(obtenerNombreEdad(personas[0]));
 // TODO 13: Usa .map() con desestructuración para crear un array de presentaciones
 // const presentaciones = personas.map(({ nombre, ciudad }) => `${nombre} vive en ${ciudad}`);
 const presentaciones = personas.map(({ nombre, ciudad }) => `${nombre} vive en ${ciudad}`);
-console.log(presentaciones);
 
 // TODO 14: Desestructura un array de números
 // const numeros = [10, 20, 30, 40, 50];
@@ -178,23 +167,20 @@ function convertirString_Array(frases){
     let array = frases.map(frase => frase.split(" "));
     return array;
 };
-console.log(frasesArray);
-console.log(convertirString_Array(frases));
 
 // TODO 16: Encuentra la primera frase que contiene "flecha" usando .find()
 // Pista: frase.includes("flecha")
 
 const primeraFrase = (array, palabra) => {
-    let frase = array.find(frase => {
-        frase.includes(palabra);
-    });
-    return frase;
+    return array.find(frase => frase.includes(palabra));
 };
-
-console.log(primeraFrase("flecha"));
 
 
 // TODO 17: Filtra solo las frases que contengan la palabra "es"
+
+const filtrarPalabras = (frases) => {
+    return frases.filter(frase => frase.includes(" es "));
+};
 
 
 // ==========================================
@@ -205,13 +191,19 @@ const numeros = [15, 8, 23, 42, 4, 16, 31, 9, 12, 27];
 
 // TODO 18: Filtra números pares y multiplícalos por 2 (combina .filter() y .map())
 
+const multiplicarPares = (numeros) => {
+    let pares = numeros.filter(numero => numero%2 == 0);
+    return pares.map(numero => numero*2);
+};
 
 // TODO 19: Ordena los números de mayor a menor usando .sort()
 // Pista: .sort((a, b) => b - a)
 
+const ordenarMayorMenor = (numeros) => numeros.sort((a, b) => b - a);
 
 // TODO 20: Verifica si algún número es mayor a 40 usando .some()
 
+const mayor40 = (numeros) => numeros.some((numero) => numero > 40);
 
 // ==========================================
 // 🔥 DESAFÍO 6: FUNCIONES DE ORDEN SUPERIOR
