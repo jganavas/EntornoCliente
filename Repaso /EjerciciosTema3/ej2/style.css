@@ -1,0 +1,22 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.seleccionado{
+    color: pink;
+}
+body{ 
+    background-color: bisque;
+    height: 100vh;
+    div.miniaturas{
+        width: 80%;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        img{
+            width: 40%;
+        }
+    }
+}
