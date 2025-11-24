@@ -1,13 +1,17 @@
-let botonEnviar = document.getElementById("botonzuelo");
+const botonEnviar = document.getElementById("botonzuelo");
+const formulario = document.getElementById("formulario");
+const tablero = document.getElementById("tablero");
 var tamano;
 
 setTamanoTablero = function() {
     tamano = document.getElementById("inputDeUsuario").value;
+    formulario.remove();
     jugar();
 };
 
 jugar = function() {
-    
+    generarHTML();
+    tablero.classList.add("estilo-tablero");
 }
 
 function generarTablero(tamano){
@@ -75,7 +79,6 @@ function colocarMinas(tablero, cantidad){
         
         count++;
     }
-
     return tablero;
 }
 
@@ -91,44 +94,30 @@ function generarTableroCopia(tamano){
         }
         tableroCopia.push(fila);
     }
-
     return tableroCopia;
 }
 
 function generarHTML(){
+    //Etiqueta contenedor tablero
+    const tablero = document.getElementById("tablero");
 
-    let tablero = [];
-    for(let i = 0; i < tamano; i++){
-        let fila = [];
-        // Bucle para crear las columnas
-        for(let j = 0; j < tamano; j++){
-            let columna = "X";
-            fila.push(columna);
-        }
-        tablero.push(fila);
-    }
+    tablero.style.gridTemplateColumns = `repeat(${tamano}, 1fr)`;
 
-    //Creación etiquetas para el tablero
-    let contenedorPadre = document.createElement("div");
-    
-    //Creo celdas
+    //Creo celdas y posiciono su valor
     for(let i = 0; i < tamano; i++){   
         for(let j = 0; j < tamano; j++){  
-            let celda = document.createElement("div");
-            let contenidoCelda = document.createElement("p");
             
-            contenidoCelda.textContent = tablero[i][j];
-            celda.innerHTML(contenidoCelda);
-            contenedorPadre.appendChild(celda);
+            let celda = document.createElement("div");
+
+            //Atributo de tipo data para guardar el valor con el que comparar con el tablero lógico
+            celda.dataset.fila = i;
+            celda.dataset.columna = j;
+            
+            celda.classList.add("estilo-celda");
+            tablero.appendChild(celda);
         }    
     }
-    return contenedorPadre;
 }
-
-let tablero = generarHTML();
-let main = document.getElementsByTagName("main");
-tablero.classList.add("estilo-tablero");
-main[0].appendChild(tablero);
 
 /* CÓDIGO BUSCAMINAS DE CONSOLA */ 
 
