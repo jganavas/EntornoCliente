@@ -95,15 +95,14 @@ function generarTableroCopia(tamano){
     return tableroCopia;
 }
 
-function generarHTMLdeTablero(){
+function generarHTML(){
 
-    // Bucle para crear las filas
     let tablero = [];
     for(let i = 0; i < tamano; i++){
         let fila = [];
         // Bucle para crear las columnas
         for(let j = 0; j < tamano; j++){
-            let columna = "0";
+            let columna = "X";
             fila.push(columna);
         }
         tablero.push(fila);
@@ -111,13 +110,14 @@ function generarHTMLdeTablero(){
 
     //Creación etiquetas para el tablero
     let contenedorPadre = document.createElement("div");
-    let celda = document.createElement("div");
-    let contenidoCelda = document.createElement("p");
     
     //Creo celdas
     for(let i = 0; i < tamano; i++){   
-        for(let j = 0; j < tamano; j++){   
-            contenidoCelda.innerText = tablero[i][j];
+        for(let j = 0; j < tamano; j++){  
+            let celda = document.createElement("div");
+            let contenidoCelda = document.createElement("p");
+            
+            contenidoCelda.textContent = tablero[i][j];
             celda.innerHTML(contenidoCelda);
             contenedorPadre.appendChild(celda);
         }    
@@ -125,8 +125,9 @@ function generarHTMLdeTablero(){
     return contenedorPadre;
 }
 
-let tablero = generarHTMLdeTablero();
+let tablero = generarHTML();
 let main = document.getElementsByTagName("main");
+tablero.classList.add("estilo-tablero");
 main[0].appendChild(tablero);
 
 /* CÓDIGO BUSCAMINAS DE CONSOLA */ 
