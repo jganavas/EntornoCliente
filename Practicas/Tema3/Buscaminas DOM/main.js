@@ -1,3 +1,137 @@
+let botonEnviar = document.getElementById("botonzuelo");
+var tamano;
+
+setTamanoTablero = function() {
+    tamano = document.getElementById("inputDeUsuario").value;
+    jugar();
+};
+
+jugar = function() {
+    
+}
+
+function generarTablero(tamano){
+    // Bucle para crear las filas
+    let tablero = [];
+    for(let i = 0; i < tamano; i++){
+        let fila = [];
+        // Bucle para crear las columnas
+        for(let j = 0; j < tamano; j++){
+            let columna = "0";
+            fila.push(columna);
+        }
+        tablero.push(fila);
+    }
+}
+
+function generarTableroLogico(tablero){
+    //Recorro el tablero
+    for (let i = 0; i < tablero.length; i++) {
+        for (let j = 0; j < tablero.length; j++) {
+            //Si la columna es una mina, continúo
+            if(tablero[i][j] == "*"){
+                continue;
+            }
+            let cont = 0;
+
+            //LOGICA PARA ASIGNAR A CADA CELDA SU NUMERO CORRESPONDIENTE
+            for (let k = -1; k <= 1; k++) {
+                for (let r = -1; r <= 1; r++) {
+                    //Ignoro la celda en la que se acciona el bucle
+                    if(k == 0 && r == 0){
+                        continue;
+                    }
+                    //Se calcula la posición relativa en la que estaría la celda
+                    let fila = i + k;
+                    let columna = j + r;
+
+                    if (fila >= 0 && fila < tablero.length && columna >= 0 && columna < tablero.length){
+                        if(tablero[fila][columna] == "*"){
+                            cont++;
+                        }
+                    }
+                }
+            }
+            tablero[i][j] = cont;
+        }
+    }
+    return tablero;
+}
+
+function colocarMinas(tablero, cantidad){
+    let count = 0;
+
+    while(count < cantidad){
+        //Genero aleatoriamente posiciones para colocar las minas
+        let minaX = Math.floor(Math.random()*tablero.length);
+        let minaY = Math.floor(Math.random()*tablero.length);
+        
+        //Me aseguro que no vuelvo a colocar una mina donde ya había una colocada
+        if(tablero[minaX][minaY] == "*"){
+            continue;
+        }
+        
+        tablero[minaX][minaY] = "*";
+        
+        count++;
+    }
+
+    return tablero;
+}
+
+function generarTableroCopia(tamano){
+    // Bucle para crear las filas
+    let tableroCopia = [];
+    for(let i = 0; i < tamano; i++){
+        let fila = [];
+        // Bucle para crear las columnas
+        for(let j = 0; j < tamano; j++){
+            let columna = "X";
+            fila.push(columna);
+        }
+        tableroCopia.push(fila);
+    }
+
+    return tableroCopia;
+}
+
+function generarHTMLdeTablero(){
+
+    // Bucle para crear las filas
+    let tablero = [];
+    for(let i = 0; i < tamano; i++){
+        let fila = [];
+        // Bucle para crear las columnas
+        for(let j = 0; j < tamano; j++){
+            let columna = "0";
+            fila.push(columna);
+        }
+        tablero.push(fila);
+    }
+
+    //Creación etiquetas para el tablero
+    let contenedorPadre = document.createElement("div");
+    let celda = document.createElement("div");
+    let contenidoCelda = document.createElement("p");
+    
+    //Creo celdas
+    for(let i = 0; i < tamano; i++){   
+        for(let j = 0; j < tamano; j++){   
+            contenidoCelda.innerText = tablero[i][j];
+            celda.innerHTML(contenidoCelda);
+            contenedorPadre.appendChild(celda);
+        }    
+    }
+    return contenedorPadre;
+}
+
+let tablero = generarHTMLdeTablero();
+let main = document.getElementsByTagName("main");
+main[0].appendChild(tablero);
+
+/* CÓDIGO BUSCAMINAS DE CONSOLA */ 
+
+/* 
 function generarTablero(tamano){
     // Bucle para crear las filas
     let tablero = [];
@@ -219,5 +353,10 @@ function jugar(){
         }
     }
 }
+*/
+
+botonEnviar.addEventListener("click", setTamanoTablero);
+
+//alert(numeroDeMinas);
 
 
