@@ -1,20 +1,122 @@
+//Constantes para DOM
 const botonEnviar = document.getElementById("botonzuelo");
 const formulario = document.getElementById("formulario");
-const tablero = document.getElementById("tablero");
+var tablero = document.getElementById("tablero");
+var tableroLogico;
 var tamano;
 
+//Seteo tamaño de tablero a través del input del formulario
 setTamanoTablero = function() {
     tamano = document.getElementById("inputDeUsuario").value;
     formulario.remove();
+    
+    //Tablero lógico
+    tableroLogico = generarTableroLogico();
+
     jugar();
 };
 
 jugar = function() {
     generarHTML();
-    tablero.classList.add("estilo-tablero");
 }
 
-function generarTablero(tamano){
+//Evento para controlar a qué fila y columna ha clickado el usuario
+tablero.addEventListener("click", (e) => {
+    let fila = 0;
+    let columna = 0;
+    if(e.target.classList.contains("celda")){
+        fila = e.target.getAttribute("data-fila");
+        columna = e.target.getAttribute("data-columna");
+        console.log(fila, columna);
+    }
+    revelarCeldas(fila, columna);
+});
+
+function generarHTML(){
+    
+    //Estilo para que el grid coloque las celdas automáticamente en función del tamaño introducido por el usuario
+    tablero.style.gridTemplateColumns = `repeat(${tamano}, 1fr)`;
+
+    //Creo celdas y posiciono su valor
+    for(let i = 0; i < tamano; i++){   
+        for(let j = 0; j < tamano; j++){  
+            
+            let celda = document.createElement("div");
+
+            //Atributo de tipo data para guardar el valor con el que comparar con el tablero lógico
+            celda.dataset.fila = i;
+            celda.dataset.columna = j;
+            
+            //Añado estilos y celdas al tablero
+            celda.classList.add("celda");
+            tablero.classList.add("estilo-tablero");
+            tablero.appendChild(celda);
+        }    
+    }
+}
+
+function revelarCeldas(fila, columna){
+    let celdas = document.getElementsByClassName("celda");
+    let cantidadCeldas = tamano * tamano;
+
+    for (let i = 0; i < cantidadCeldas; i++) {
+        let x = celdas[i].getAttribute("data-fila");
+        let y = celdas[i].getAttribute("data-columna");
+        celdas[i].innerText = tableroLogico[x][y];
+    }
+
+}
+
+/* CÓDIGO LÓGICO */
+
+function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
+
+    let filaCorrecta = fila >= 0 && fila < tablero.length && !isNaN(fila);
+    let columnaCorrecta = columna >= 0 && columna < tablero.length && !isNaN(columna);
+
+    //CONDICION DE SALIDA RECURSIVDAD
+    if(!filaCorrecta || !columnaCorrecta){
+        return;
+    }
+
+    //CONDICION DE SALIDA RECURSIVIDAD
+    if(tableroCopia[fila][columna] != "X"){
+        return;
+    }
+    
+    tableroCopia[fila][columna] = tablero[fila][columna];
+
+    //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
+    if(tablero[fila][columna] != "0"){
+        tableroCopia[fila][columna] = tablero[fila][columna];
+    //Si es una celda solitaria, revelo su alreddor
+    }else if(tablero[fila][columna] == "0"){
+
+        for (let i = fila-1; i <= fila+1; i++) {
+            //Mantengo fila en los límites
+            if(i < 0 || i >= tablero.length){
+                continue;
+            } 
+            for (let j = columna-1; j <= columna+1; j++) {
+                //Mantengo columna en los límites
+                if(j < 0 || j >= tablero.length){
+                    continue;
+                }
+                //Ignoro la celda en la que se acciona el bucle
+                if(i == fila && j == columna){
+                    continue;
+                }
+                
+                mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
+            }
+        }
+    }
+}
+
+function generarTableroLogico(){
+
+    /* CREACION TABLERO */
+
     // Bucle para crear las filas
     let tablero = [];
     for(let i = 0; i < tamano; i++){
@@ -26,9 +128,28 @@ function generarTablero(tamano){
         }
         tablero.push(fila);
     }
-}
 
-function generarTableroLogico(tablero){
+    /* ASIGNACION BOMBAS */
+
+    let count = 0;
+
+    while(count < 8){
+        //Genero aleatoriamente posiciones para colocar las minas
+        let minaX = Math.floor(Math.random()*tablero.length);
+        let minaY = Math.floor(Math.random()*tablero.length);
+        
+        //Me aseguro que no vuelvo a colocar una mina donde ya había una colocada
+        if(tablero[minaX][minaY] == "*"){
+            continue;
+        }
+        
+        tablero[minaX][minaY] = "*";
+        
+        count++;
+    }
+
+    /* ASIGNACIÓN VALORES DE CELDA */
+
     //Recorro el tablero
     for (let i = 0; i < tablero.length; i++) {
         for (let j = 0; j < tablero.length; j++) {
@@ -62,60 +183,47 @@ function generarTableroLogico(tablero){
     return tablero;
 }
 
-function colocarMinas(tablero, cantidad){
-    let count = 0;
+function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
 
-    while(count < cantidad){
-        //Genero aleatoriamente posiciones para colocar las minas
-        let minaX = Math.floor(Math.random()*tablero.length);
-        let minaY = Math.floor(Math.random()*tablero.length);
-        
-        //Me aseguro que no vuelvo a colocar una mina donde ya había una colocada
-        if(tablero[minaX][minaY] == "*"){
-            continue;
-        }
-        
-        tablero[minaX][minaY] = "*";
-        
-        count++;
+    let filaCorrecta = fila >= 0 && fila < tablero.length && !isNaN(fila);
+    let columnaCorrecta = columna >= 0 && columna < tablero.length && !isNaN(columna);
+
+    //CONDICION DE SALIDA RECURSIVDAD
+    if(!filaCorrecta || !columnaCorrecta){
+        return;
     }
-    return tablero;
-}
 
-function generarTableroCopia(tamano){
-    // Bucle para crear las filas
-    let tableroCopia = [];
-    for(let i = 0; i < tamano; i++){
-        let fila = [];
-        // Bucle para crear las columnas
-        for(let j = 0; j < tamano; j++){
-            let columna = "X";
-            fila.push(columna);
-        }
-        tableroCopia.push(fila);
+    //CONDICION DE SALIDA RECURSIVIDAD
+    if(tableroCopia[fila][columna] != "X"){
+        return;
     }
-    return tableroCopia;
-}
+    
+    tableroCopia[fila][columna] = tablero[fila][columna];
 
-function generarHTML(){
-    //Etiqueta contenedor tablero
-    const tablero = document.getElementById("tablero");
+    //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
+    if(tablero[fila][columna] != "0"){
+        tableroCopia[fila][columna] = tablero[fila][columna];
+    //Si es una celda solitaria, revelo su alreddor
+    }else if(tablero[fila][columna] == "0"){
 
-    tablero.style.gridTemplateColumns = `repeat(${tamano}, 1fr)`;
-
-    //Creo celdas y posiciono su valor
-    for(let i = 0; i < tamano; i++){   
-        for(let j = 0; j < tamano; j++){  
-            
-            let celda = document.createElement("div");
-
-            //Atributo de tipo data para guardar el valor con el que comparar con el tablero lógico
-            celda.dataset.fila = i;
-            celda.dataset.columna = j;
-            
-            celda.classList.add("estilo-celda");
-            tablero.appendChild(celda);
-        }    
+        for (let i = fila-1; i <= fila+1; i++) {
+            //Mantengo fila en los límites
+            if(i < 0 || i >= tablero.length){
+                continue;
+            } 
+            for (let j = columna-1; j <= columna+1; j++) {
+                //Mantengo columna en los límites
+                if(j < 0 || j >= tablero.length){
+                    continue;
+                }
+                //Ignoro la celda en la que se acciona el bucle
+                if(i == fila && j == columna){
+                    continue;
+                }
+                
+                mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
+            }
+        }
     }
 }
 
@@ -159,7 +267,7 @@ function colocarMinas(tablero, cantidad){
     return tablero;
 }
 
-function generarTableroAdmin(tablero){
+function generarTableroLogico(tablero){
 
     //Recorro el tablero
     for (let i = 0; i < tablero.length; i++) {
@@ -304,7 +412,7 @@ function jugar(){
     //Variables de tablero
     let tablero = generarTablero(tamano);
     tablero = colocarMinas(tablero, minas);
-    tablero = generarTableroAdmin(tablero);
+    tablero = generarTableroLogico(tablero);
     tableroCopia = generarTableroCopia(tamano);
 
     //Bucle de juego
