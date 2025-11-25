@@ -49,6 +49,7 @@ function generarHTML(){
             
             //Añado estilos y celdas al tablero
             celda.classList.add("celda");
+            celda.classList.add("oculta");
             tablero.classList.add("estilo-tablero");
             tablero.appendChild(celda);
         }    
@@ -63,6 +64,8 @@ function revelarCeldas(fila, columna){
         let x = celdas[i].getAttribute("data-fila");
         let y = celdas[i].getAttribute("data-columna");
         celdas[i].innerText = tableroLogico[x][y];
+        celdas[i].classList.toggle("oculta");
+        celdas[i].classList.add("revelada");
     }
 
 }
