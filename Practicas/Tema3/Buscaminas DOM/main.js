@@ -27,9 +27,12 @@ tablero.addEventListener("click", (e) => {
     if(e.target.classList.contains("celda")){
         fila = e.target.getAttribute("data-fila");
         columna = e.target.getAttribute("data-columna");
-        console.log(fila, columna);
+        //console.log(fila, columna);
     }
-    revelarCeldas(fila, columna);
+    if(e.target.innerText === "*"){
+        tablero.remove();
+    }
+    mostrarCasillasAdyacentes(tableroLogico, fila, columna);
 });
 
 function generarHTML(){
@@ -51,31 +54,49 @@ function generarHTML(){
             celda.classList.add("celda");
             celda.classList.add("oculta");
             tablero.classList.add("estilo-tablero");
+
             tablero.appendChild(celda);
         }    
     }
-}
 
-function revelarCeldas(fila, columna){
-    let celdas = document.getElementsByClassName("celda");
-    let cantidadCeldas = tamano * tamano;
+    let tamanoTotal = tamano*tamano;
+    let celdas = document.getElementsByClassName("celda"); 
 
-    for (let i = 0; i < cantidadCeldas; i++) {
+    for (let i = 0; i < tamanoTotal; i++) {
+        
         let x = celdas[i].getAttribute("data-fila");
         let y = celdas[i].getAttribute("data-columna");
+        
         celdas[i].innerText = tableroLogico[x][y];
-        celdas[i].classList.toggle("oculta");
-        celdas[i].classList.add("revelada");
     }
-
 }
 
-/* CÓDIGO LÓGICO */
+/* let celda = document.querySelector(`div[data-fila='${fila}'][data-columna='${columna}']`);
 
-function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
+En estos métodos de revelarCelda y mostrarCasillasAdyacentes he usado un querySelector para acceder a la celda a través de los atributos que guardan su posición y la cual será sobre la que se va a accionar la función. He perdido casi 3 horas de mi vida porque no importaba lo que cambiase e intentase, siempre se accionaba una celda en la primera fila o en la primera columna. Resulta que usaba una coma entre cada corchete y eso funciona como un OR :_)
 
-    let filaCorrecta = fila >= 0 && fila < tablero.length && !isNaN(fila);
-    let columnaCorrecta = columna >= 0 && columna < tablero.length && !isNaN(columna);
+Estaba escrita asi:
+
+querySelector(`div[data-fila='${fila}'], div[data-columna='${columna}']`);
+
+*/
+
+function revelarCelda(fila, columna){
+    let celda = document.querySelector(`div[data-fila='${fila}'][data-columna='${columna}']`);
+    
+    celda.classList.remove("oculta");
+    celda.classList.add("revelada");
+    //console.log(`Fila: ${fila}, Columna: ${columna}`);
+}
+
+function mostrarCasillasAdyacentes(tablero, fila, columna){
+
+    let tamanoTotal = tamano*tamano;
+
+    let filaCorrecta = fila >= 0 && fila < tamano;
+    let columnaCorrecta = columna >= 0 && columna < tamano;
+
+    let celdita = document.querySelector(`div[data-fila='${fila}'][data-columna='${columna}']`);
 
     //CONDICION DE SALIDA RECURSIVDAD
     if(!filaCorrecta || !columnaCorrecta){
@@ -83,34 +104,37 @@ function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
     }
 
     //CONDICION DE SALIDA RECURSIVIDAD
-    if(tableroCopia[fila][columna] != "X"){
+    if(celdita.classList.contains("revelada")){
         return;
     }
     
-    tableroCopia[fila][columna] = tablero[fila][columna];
+    revelarCelda(fila, columna);
+    //console.log(`Log 1: Fila: ${fila}, Columna: ${columna}`);
 
     //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
-    if(tablero[fila][columna] != "0"){
-        tableroCopia[fila][columna] = tablero[fila][columna];
+    if(celdita.innerText != "0"){
+        revelarCelda(fila, columna);
+        //console.log(`Log 2: Fila: ${fila}, Columna: ${columna}`);
     //Si es una celda solitaria, revelo su alreddor
-    }else if(tablero[fila][columna] == "0"){
+    }else if(celdita.innerText == "0"){
 
         for (let i = fila-1; i <= fila+1; i++) {
             //Mantengo fila en los límites
-            if(i < 0 || i >= tablero.length){
+            if(i < 0 || i >= tamano){
                 continue;
             } 
             for (let j = columna-1; j <= columna+1; j++) {
                 //Mantengo columna en los límites
-                if(j < 0 || j >= tablero.length){
+                if(j < 0 || j >= tamano){
                     continue;
                 }
                 //Ignoro la celda en la que se acciona el bucle
                 if(i == fila && j == columna){
                     continue;
                 }
-                
-                mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
+                //console.log(`Log 3: Fila: ${fila}, Columna: ${columna}`);
+                //console.log(`Log 3.2: Fila: ${i}, Columna: ${j}`);
+                mostrarCasillasAdyacentes(tablero, i, j);
             }
         }
     }
@@ -184,50 +208,6 @@ function generarTableroLogico(){
         }
     }
     return tablero;
-}
-
-function mostrarCasillasAdyacentes(tablero, tableroCopia, fila, columna){
-
-    let filaCorrecta = fila >= 0 && fila < tablero.length && !isNaN(fila);
-    let columnaCorrecta = columna >= 0 && columna < tablero.length && !isNaN(columna);
-
-    //CONDICION DE SALIDA RECURSIVDAD
-    if(!filaCorrecta || !columnaCorrecta){
-        return;
-    }
-
-    //CONDICION DE SALIDA RECURSIVIDAD
-    if(tableroCopia[fila][columna] != "X"){
-        return;
-    }
-    
-    tableroCopia[fila][columna] = tablero[fila][columna];
-
-    //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
-    if(tablero[fila][columna] != "0"){
-        tableroCopia[fila][columna] = tablero[fila][columna];
-    //Si es una celda solitaria, revelo su alreddor
-    }else if(tablero[fila][columna] == "0"){
-
-        for (let i = fila-1; i <= fila+1; i++) {
-            //Mantengo fila en los límites
-            if(i < 0 || i >= tablero.length){
-                continue;
-            } 
-            for (let j = columna-1; j <= columna+1; j++) {
-                //Mantengo columna en los límites
-                if(j < 0 || j >= tablero.length){
-                    continue;
-                }
-                //Ignoro la celda en la que se acciona el bucle
-                if(i == fila && j == columna){
-                    continue;
-                }
-                
-                mostrarCasillasAdyacentes(tablero, tableroCopia, i, j);
-            }
-        }
-    }
 }
 
 /* CÓDIGO BUSCAMINAS DE CONSOLA */ 

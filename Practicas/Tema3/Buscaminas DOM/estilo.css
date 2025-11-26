@@ -86,6 +86,7 @@ body{
             background-image: url(./img/bloque.jpg);
             background-size: cover;
             background-position: center center;
+            text-indent: -9999px;
         }
         .revelada{
             background-image: none;
@@ -96,5 +97,8 @@ body{
         .bomba{
             background-image: url(./img/iconoBomba.png);
         }
+        /*.visible{
+            display: none;
+        }*/
     }
 }
