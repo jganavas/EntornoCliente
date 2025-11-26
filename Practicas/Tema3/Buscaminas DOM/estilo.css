@@ -97,8 +97,22 @@ body{
         .bomba{
             background-image: url(./img/iconoBomba.png);
         }
-        /*.visible{
-            display: none;
-        }*/
+        .partida-acabada{
+            width: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            img{
+                max-width: 100%;
+                padding: 5%;
+            }
+        }
+        .bandera{
+            background-image: url(./img/bandera.jpg);
+            background-size: cover;
+            background-position: center center;
+            text-indent: -9999px;
+        }
     }
 }

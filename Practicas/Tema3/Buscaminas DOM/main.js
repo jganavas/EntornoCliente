@@ -5,6 +5,9 @@ var tablero = document.getElementById("tablero");
 var tableroLogico;
 var tamano;
 
+let derrota;
+let victoria;
+
 //Seteo tamaño de tablero a través del input del formulario
 setTamanoTablero = function() {
     tamano = document.getElementById("inputDeUsuario").value;
@@ -18,6 +21,20 @@ setTamanoTablero = function() {
 
 jugar = function() {
     generarHTML();
+    if(derrota){
+        console.log("hola");
+        let contenedorBomba = document.getElementById("explosion");
+        let img = document.createElement("img");
+        
+        img.setAttribute("src", "./img/explosion.gif");
+        contenedorBomba.appendChild(img);
+    }else if(victoria){
+        let contenedorVictoria = document.getElementById("victoria");
+        let img = document.createElement("img");
+
+        img.setAttribute("src", "./img/victoria.gif");
+        contenedorVictoria.appendChild(img);
+    }
 }
 
 //Evento para controlar a qué fila y columna ha clickado el usuario
@@ -30,9 +47,19 @@ tablero.addEventListener("click", (e) => {
         //console.log(fila, columna);
     }
     if(e.target.innerText === "*"){
+        derrota = true;
+        e.stopPropagation();
         tablero.remove();
     }
     mostrarCasillasAdyacentes(tableroLogico, fila, columna);
+});
+
+//Evento para controlar a qué fila y columna ha clickado el usuario
+tablero.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    
+    e.target.classList.add("bandera");
+    e.target.classList.toggle("oculta");
 });
 
 function generarHTML(){
@@ -68,6 +95,9 @@ function generarHTML(){
         let y = celdas[i].getAttribute("data-columna");
         
         celdas[i].innerText = tableroLogico[x][y];
+        if(celdas[i].innerText === "*"){
+            celdas[i].dataset.bomba = "Bomba";
+        }
     }
 }
 
@@ -105,6 +135,11 @@ function mostrarCasillasAdyacentes(tablero, fila, columna){
 
     //CONDICION DE SALIDA RECURSIVIDAD
     if(celdita.classList.contains("revelada")){
+        return;
+    }
+
+    //CONDICION DE SALIDA RECURSIVIDAD
+    if(celdita.hasAttribute("data-bomba")){
         return;
     }
     
