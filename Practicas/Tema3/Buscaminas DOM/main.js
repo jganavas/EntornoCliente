@@ -4,6 +4,8 @@ const formulario = document.getElementById("formulario");
 var tablero = document.getElementById("tablero");
 var tableroLogico;
 var tamano;
+let contadorCeldas = 0;
+let numeroBombas = 8;
 
 let derrota;
 let victoria;
@@ -21,20 +23,6 @@ setTamanoTablero = function() {
 
 jugar = function() {
     generarHTML();
-    if(derrota){
-        console.log("hola");
-        let contenedorBomba = document.getElementById("explosion");
-        let img = document.createElement("img");
-        
-        img.setAttribute("src", "./img/explosion.gif");
-        contenedorBomba.appendChild(img);
-    }else if(victoria){
-        let contenedorVictoria = document.getElementById("victoria");
-        let img = document.createElement("img");
-
-        img.setAttribute("src", "./img/victoria.gif");
-        contenedorVictoria.appendChild(img);
-    }
 }
 
 //Evento para controlar a qué fila y columna ha clickado el usuario
@@ -52,13 +40,28 @@ tablero.addEventListener("click", (e) => {
         tablero.remove();
     }
     mostrarCasillasAdyacentes(tableroLogico, fila, columna);
+    if(derrota){
+        console.log("hola");
+        let contenedorBomba = document.getElementById("explosion");
+        let img = document.createElement("img");
+        
+        img.setAttribute("src", "./img/explosion.gif");
+        contenedorBomba.appendChild(img);
+    }else if(victoria){
+        tablero.remove();
+        let contenedorVictoria = document.getElementById("victoria");
+        let img = document.createElement("img");
+
+        img.setAttribute("src", "./img/victoria.gif");
+        contenedorVictoria.appendChild(img);
+    }
 });
 
 //Evento para controlar a qué fila y columna ha clickado el usuario
 tablero.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     
-    e.target.classList.add("bandera");
+    e.target.classList.toggle("bandera");
     e.target.classList.toggle("oculta");
 });
 
@@ -142,13 +145,20 @@ function mostrarCasillasAdyacentes(tablero, fila, columna){
     if(celdita.hasAttribute("data-bomba")){
         return;
     }
+
+    //CONDICION DE SALIDA RECURSIVIDAD
+    if(celdita.classList.contains("bandera")){
+        return;
+    }
     
     revelarCelda(fila, columna);
+    contadorCeldas++;
     //console.log(`Log 1: Fila: ${fila}, Columna: ${columna}`);
 
     //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
     if(celdita.innerText != "0"){
         revelarCelda(fila, columna);
+        contadorCeldas++;
         //console.log(`Log 2: Fila: ${fila}, Columna: ${columna}`);
     //Si es una celda solitaria, revelo su alreddor
     }else if(celdita.innerText == "0"){
@@ -173,6 +183,10 @@ function mostrarCasillasAdyacentes(tablero, fila, columna){
             }
         }
     }
+
+    if(contadorCeldas >= tamanoTotal - numeroBombas){
+        victoria = true;
+    }
 }
 
 function generarTableroLogico(){
@@ -195,7 +209,7 @@ function generarTableroLogico(){
 
     let count = 0;
 
-    while(count < 8){
+    while(count < numeroBombas){
         //Genero aleatoriamente posiciones para colocar las minas
         let minaX = Math.floor(Math.random()*tablero.length);
         let minaY = Math.floor(Math.random()*tablero.length);
