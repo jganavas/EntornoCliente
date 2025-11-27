@@ -6,6 +6,7 @@ var tableroLogico;
 var tamano;
 let contadorCeldas = 0;
 let numeroBombas = 8;
+let cantidadBanderas = numeroBombas;
 
 let derrota;
 let victoria;
@@ -32,16 +33,17 @@ tablero.addEventListener("click", (e) => {
     if(e.target.classList.contains("celda")){
         fila = e.target.getAttribute("data-fila");
         columna = e.target.getAttribute("data-columna");
-        //console.log(fila, columna);
     }
-    if(e.target.innerText === "*"){
+    logicaClick(e.target, fila, columna);
+});
+
+function logicaClick(celda, fila, columna){
+    if(celda.innerText === "*"){
         derrota = true;
-        e.stopPropagation();
-        tablero.remove();
     }
     mostrarCasillasAdyacentes(tableroLogico, fila, columna);
     if(derrota){
-        console.log("hola");
+        tablero.remove();
         let contenedorBomba = document.getElementById("explosion");
         let img = document.createElement("img");
         
@@ -55,14 +57,29 @@ tablero.addEventListener("click", (e) => {
         img.setAttribute("src", "./img/victoria.gif");
         contenedorVictoria.appendChild(img);
     }
-});
+}
 
-//Evento para controlar a qué fila y columna ha clickado el usuario
+//Evento para colocar banderas
 tablero.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    
+
+    if(e.target.classList.contains("revelada")){
+        e.stopPropagation();
+    }
+
+    cantidadBanderas--;
+    if(cantidadBanderas <= 0){
+        alert("No puedes usar más banderas");
+    }
+
     e.target.classList.toggle("bandera");
     e.target.classList.toggle("oculta");
+});
+
+tablero.addEventListener("dblclick", (e) => {
+    if(e.target.classList.contains("bandera")){
+        e.target.classList.remove("bandera");
+    }
 });
 
 function generarHTML(){
@@ -98,6 +115,7 @@ function generarHTML(){
         let y = celdas[i].getAttribute("data-columna");
         
         celdas[i].innerText = tableroLogico[x][y];
+
         if(celdas[i].innerText === "*"){
             celdas[i].dataset.bomba = "Bomba";
         }
@@ -158,7 +176,7 @@ function mostrarCasillasAdyacentes(tablero, fila, columna){
     //Si tiene minas alrededor revelo el número de minas adyacentes sin mostrar su alrededor
     if(celdita.innerText != "0"){
         revelarCelda(fila, columna);
-        contadorCeldas++;
+        
         //console.log(`Log 2: Fila: ${fila}, Columna: ${columna}`);
     //Si es una celda solitaria, revelo su alreddor
     }else if(celdita.innerText == "0"){
@@ -177,8 +195,7 @@ function mostrarCasillasAdyacentes(tablero, fila, columna){
                 if(i == fila && j == columna){
                     continue;
                 }
-                //console.log(`Log 3: Fila: ${fila}, Columna: ${columna}`);
-                //console.log(`Log 3.2: Fila: ${i}, Columna: ${j}`);
+                contadorCeldas++;
                 mostrarCasillasAdyacentes(tablero, i, j);
             }
         }
