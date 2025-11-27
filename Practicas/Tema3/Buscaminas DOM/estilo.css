@@ -94,9 +94,6 @@ body{
         .bandera{
             background-image: url(./img/estrella.png);
         }
-        .bomba{
-            background-image: url(./img/iconoBomba.png);
-        }
         .partida-acabada{
             width: 70%;
             display: flex;
@@ -113,6 +110,22 @@ body{
             background-size: cover;
             background-position: center center;
             text-indent: -9999px;
+        }
+        .estilo-temporizador{
+            width: 50%;
+            font-size: 25px;
+            color: rgb(95, 192, 56);
+            font-weight: 500;
+            margin: auto;
+            margin-top: 5%;
+        }
+        #cantidadBanderas{
+            font-size: 30px;
+            width: 50%;
+            color: rgb(192, 117, 56);
+            font-weight: 500;
+            margin: auto;
+            margin-bottom: 5%;
         }
     }
 }
