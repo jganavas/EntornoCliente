@@ -25,7 +25,7 @@ setTamanoTablero = function() {
 };
 jugar = function() {
     generarHTML();
-    setInterval(temporizador(), 1000);
+    setInterval(temporizador, 1000);
 }
 
 let contenedorFinDePartida = document.getElementById("finDePartida");
