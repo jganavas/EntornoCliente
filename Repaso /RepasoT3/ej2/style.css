@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+img{
+    max-width: 100%;
+}
+#cuerpaso{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    #imagenes{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30%;
+        gap: 2px;
+        img{
+            object-fit: cover;
+            width: 100%;
+            height: 300px;
+            cursor: grab;
+        }   
+    }
+}
