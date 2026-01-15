@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+img{
+    max-width: 100%;
+}
+body{ 
+    background-color: bisque;
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    #imagenContenedor{
+        width: 70%;
+        margin: auto;
+    }
+    #miniaturas{
+        width: 90%;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        img{
+            width: 27.78%;
+            cursor: pointer;
+        }
+    }
+}
+.activa{
+    filter: drop-shadow(16px 16px red);
+    border: 2px solid greenyellow;
+}
