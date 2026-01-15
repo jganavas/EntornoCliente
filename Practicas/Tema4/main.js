@@ -8,6 +8,7 @@ let data_id = 1;
 
 formulario.addEventListener("submit", (e) => {
     e.preventDefault();
+    
     let numColumnas = parseInt(selectInput.value);
 
     if(!numColumnas){
@@ -24,12 +25,13 @@ formulario.addEventListener("submit", (e) => {
             submit.insertAdjacentElement("beforebegin", div);
         }
 
-        estado = "nombracion";
+        estado = "configuracion";
+        return;
+    }
+    if(estado === "configuracion"){
+        validarInputs();
 
-    }else if(estado === "nombracion"){
-
-        validarCamposVacios();
-
+        
     }
 
 });
@@ -66,29 +68,35 @@ const generarInput = () => {
     return input;
 };
 
-const validarCamposVacios = () => {
-
-    let inputsTexto = document.querySelectorAll(".input-nombre");
-    let inputsCantidad = document.querySelectorAll(".input-cantidad-tareas");
-    let camposVacios = false;
-    let numTareasIncorrectas = false;
-    //Expresion regular para validar entre 1 y 20
+const validarInputs = () => {
+    
     const regex = /^([1-9]|1[0-9]|20)$/;
 
     formulario.addEventListener("change", (e) => {
-        if(e.target.value.trim() === ""){
-            camposVacios = true;
-        }else if(regex.test(e.target.value)){
-            numTareasIncorrectas = true;
-        }
-
-        if(camposVacios){
-            alert("No se permiten campos vacios");
-        }else if(numTareasIncorrectas){
-            alert("El numero de tareas es incorrecto")
+        
+        if(e.target.classList.contains("input-cantidad-tareas")){
+            if(e.target.value.trim() === ""){
+                alert("No se permiten campos vacios");
+                e.target.focus();
+            }else if(!regex.test(e.target.value)){
+                alert("El numero de tareas es incorrecto");
+                e.target.focus();
+            }
         }
         
-
     });
+
+    let inputsNombre = document.querySelectorAll(".input-nombre");
+    let camposVacios = false;
+
+    inputsNombre.forEach((input) => {
+        if(input.value.trim() === ""){
+            camposVacios = true;
+        }
+    });
+
+    if(camposVacios){
+        alert("No se permiten campos vacíos en los nombres");
+    }
 
 };

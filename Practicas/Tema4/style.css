@@ -44,6 +44,9 @@ body{
         }
     }
 }
-.resaltado{
-    border: 1px solid red;
+.tablero{
+    display: grid;
+    grid-template-rows: 50px 1fr;
+    gap: 20px;
+    height: 100vh;
 }
