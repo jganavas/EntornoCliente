@@ -28,13 +28,13 @@ formulario.addEventListener("submit", (e) => {
         estado = "configuracion";
         return;
     }
-    if(estado === "configuracion"){
-        validarInputs();
-
-        
+    if(estado === "configuracion" && inputsValidados()){
+        guardarEnMemoria(numColumnas);
     }
 
 });
+
+console.log(localStorage.getItem("formulario"));
 
 let cantidadNombres = 1;
 let numeroTarea = 1;
@@ -68,7 +68,7 @@ const generarInput = () => {
     return input;
 };
 
-const validarInputs = () => {
+const inputsValidados = () => {
     
     const regex = /^([1-9]|1[0-9]|20)$/;
 
@@ -78,9 +78,11 @@ const validarInputs = () => {
             if(e.target.value.trim() === ""){
                 alert("No se permiten campos vacios");
                 e.target.focus();
+                return false;
             }else if(!regex.test(e.target.value)){
                 alert("El numero de tareas es incorrecto");
                 e.target.focus();
+                return false;
             }
         }
         
@@ -97,6 +99,34 @@ const validarInputs = () => {
 
     if(camposVacios){
         alert("No se permiten campos vacíos en los nombres");
+        return false;
     }
 
+    return true;
+
+};
+
+const guardarEnMemoria = (numColumnas) => {
+    const formulario = {
+        numColumnas :`${numColumnas}`
+    };
+
+
+    //buscar elementos por data-attribute en lugar de buscar por clase (query guarda elemento x))
+    let inputsNombre = document.querySelectorAll(".input-nombre");
+    let numeroTareas = document.querySelectorAll(".input-cantidad-tareas");
+
+    for (let i = 0; i < inputsNombre.length; i++) {
+        formulario[`nombreCol ${i+1}`] = inputsNombre[i];
+    }
+
+    for (let i = 0; i < numeroTareas.length; i++) {
+        formulario[`maxCol ${i+1}`] = numeroTareas[i];
+    }
+
+    console.log("Hola");
+    console.log(Object.values(formulario));
+
+    localStorage.setItem("formulario", JSON.stringify(formulario));
+    
 };
