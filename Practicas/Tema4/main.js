@@ -4,7 +4,6 @@ let label = document.getElementById("label");
 let formulario = document.getElementById("formulario");
 let estado = "creacion";
 let num = 1;
-let data_id = 1;
 
 formulario.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -16,25 +15,45 @@ formulario.addEventListener("submit", (e) => {
         return;
     }
 
-    if(estado === "creacion"){
-        selectInput.remove();
-        label.innerText = "Configura las columnas";
-
-        for (let i = 0; i < numColumnas; i++) {
-            let div = generarDiv();
-            submit.insertAdjacentElement("beforebegin", div);
-        }
+    if(estado === "creacion"){       
+        crearFormulario(numColumnas);
 
         estado = "configuracion";
         return;
     }
+
     if(estado === "configuracion" && inputsValidados()){
+        localStorage.removeItem("formularioTemporal");
         guardarEnMemoria(numColumnas);
     }
 
 });
 
-console.log(localStorage.getItem("formulario"));
+formulario.addEventListener("change", (e) => {
+    if (estado === "configuracion") {
+        if (e.target.classList.contains("input-nombre") || 
+            e.target.classList.contains("input-cantidad-tareas")) {
+            guardarFormularioTemporal();
+        }
+    }
+});
+
+const guardarFormularioTemporal = () => {
+    let formularioTemporal = JSON.parse(localStorage.getItem("formularioTemporal"));
+    
+    let inputsNombre = document.querySelectorAll(".input-nombre");
+    let inputsCantidad = document.querySelectorAll(".input-cantidad-tareas");
+
+    formularioTemporal["nombres"].forEach((input, indice) => {
+        input["nombres"] = inputsNombre[indice].value;
+    });
+
+    formularioTemporal["numTareas"].forEach((input, indice) => {
+        input["numTareas"] = inputsCantidad[indice].value;
+    });
+    
+    localStorage.setItem("formularioTemporal", JSON.stringify(formularioTemporal));
+};
 
 let cantidadNombres = 1;
 let numeroTarea = 1;
@@ -52,7 +71,7 @@ const generarDiv = () => {
     inputCantidadTareas.classList.add("input-cantidad-tareas");
 
     inputNombre.setAttribute("placeholder", `Nombre de columna ${cantidadNombres++}`);
-    inputCantidadTareas.setAttribute("placeholder", `Cantidad de tareas`);
+    inputCantidadTareas.setAttribute("placeholder", "Cantidad de tareas");
 
     div.appendChild(inputNombre);
     div.appendChild(inputCantidadTareas);
@@ -66,6 +85,18 @@ const generarInput = () => {
     input.setAttribute("type", "text");
 
     return input;
+};
+
+const crearFormulario = (numColumnas) => {
+
+    selectInput.remove();
+    label.innerText = "Configura las columnas";
+
+    for (let i = 0; i < numColumnas; i++) {
+        let div = generarDiv();
+        submit.insertAdjacentElement("beforebegin", div);
+    }
+
 };
 
 const inputsValidados = () => {
@@ -108,25 +139,46 @@ const inputsValidados = () => {
 
 const guardarEnMemoria = (numColumnas) => {
     const formulario = {
-        numColumnas :`${numColumnas}`
+        numColumnas :`${numColumnas}`,
+        nombres: {},
+        numeroTareas: {}
     };
 
-
-    //buscar elementos por data-attribute en lugar de buscar por clase (query guarda elemento x))
     let inputsNombre = document.querySelectorAll(".input-nombre");
     let numeroTareas = document.querySelectorAll(".input-cantidad-tareas");
 
     for (let i = 0; i < inputsNombre.length; i++) {
-        formulario[`nombreCol ${i+1}`] = inputsNombre[i];
+        formulario.nombres[`nombreCol ${i+1}`] = inputsNombre[i].value;
     }
 
     for (let i = 0; i < numeroTareas.length; i++) {
-        formulario[`maxCol ${i+1}`] = numeroTareas[i];
+        formulario.numeroTareas[`tareasCol ${i+1}`] = numeroTareas[i].value;
     }
-
-    console.log("Hola");
-    console.log(Object.values(formulario));
 
     localStorage.setItem("formulario", JSON.stringify(formulario));
     
 };
+
+const cargarFormulario = () => {
+
+    estado = "configuracion";
+
+    let configuracion = JSON.parse(localStorage.getItem("formularioTemporal"));
+    crearFormulario(configuracion.numColumnas);
+
+    let inputsNombre = document.querySelectorAll(".input-nombre");
+    let numeroTareas = document.querySelectorAll(".input-cantidad-tareas");
+
+    inputsNombre.forEach((input, indice) => {
+        input.value = configuracion.nombres[indice];
+    });
+
+    numeroTareas.forEach((input, indice) => {
+        input.value = configuracion.numTareas[indice];
+    });
+
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+    cargarFormulario();
+});
