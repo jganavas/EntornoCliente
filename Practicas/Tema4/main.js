@@ -4,16 +4,25 @@ let label = document.getElementById("label");
 let formulario = document.getElementById("formulario");
 let estado = "creacion";
 let num = 1;
+//localStorage.clear();
+const formularioTemporal = {
+    nombres: {},
+    numeroTareas: {}
+};
 
 formulario.addEventListener("submit", (e) => {
     e.preventDefault();
     
     let numColumnas = parseInt(selectInput.value);
 
-    if(!numColumnas){
+    if(estado != "configuracion" && !numColumnas){
         alert("Selecciona una cantidad de columnas");
         return;
     }
+
+    formularioTemporal.numColumnas = numColumnas;
+
+    localStorage.setItem("formularioTemporal", JSON.stringify(formularioTemporal));
 
     if(estado === "creacion"){       
         crearFormulario(numColumnas);
@@ -31,26 +40,22 @@ formulario.addEventListener("submit", (e) => {
 
 formulario.addEventListener("change", (e) => {
     if (estado === "configuracion") {
-        if (e.target.classList.contains("input-nombre") || 
-            e.target.classList.contains("input-cantidad-tareas")) {
-            guardarFormularioTemporal();
-        }
+        guardarFormularioTemporal();      
     }
 });
 
 const guardarFormularioTemporal = () => {
-    let formularioTemporal = JSON.parse(localStorage.getItem("formularioTemporal"));
-    
+
     let inputsNombre = document.querySelectorAll(".input-nombre");
     let inputsCantidad = document.querySelectorAll(".input-cantidad-tareas");
 
-    formularioTemporal["nombres"].forEach((input, indice) => {
-        input["nombres"] = inputsNombre[indice].value;
-    });
+    for (let i = 0; i < inputsNombre.length; i++) {
+        formularioTemporal.nombres[`nombreCol ${i+1}`] = inputsNombre[i].value;
+    }
 
-    formularioTemporal["numTareas"].forEach((input, indice) => {
-        input["numTareas"] = inputsCantidad[indice].value;
-    });
+    for (let i = 0; i < inputsNombre.length; i++) {
+        formularioTemporal.numeroTareas[`tareasCol ${i+1}`] = inputsCantidad[i].value;
+    }
     
     localStorage.setItem("formularioTemporal", JSON.stringify(formularioTemporal));
 };
@@ -138,8 +143,9 @@ const inputsValidados = () => {
 };
 
 const guardarEnMemoria = (numColumnas) => {
+
     const formulario = {
-        numColumnas :`${numColumnas}`,
+        numColumnas: numColumnas,
         nombres: {},
         numeroTareas: {}
     };
@@ -156,10 +162,13 @@ const guardarEnMemoria = (numColumnas) => {
     }
 
     localStorage.setItem("formulario", JSON.stringify(formulario));
-    
 };
 
 const cargarFormulario = () => {
+
+    if(localStorage.length === 0){
+        return;
+    }
 
     estado = "configuracion";
 
@@ -169,16 +178,29 @@ const cargarFormulario = () => {
     let inputsNombre = document.querySelectorAll(".input-nombre");
     let numeroTareas = document.querySelectorAll(".input-cantidad-tareas");
 
-    inputsNombre.forEach((input, indice) => {
-        input.value = configuracion.nombres[indice];
+    Object.values(configuracion.nombres).forEach((nombre, indice) => {
+        inputsNombre[indice].value = nombre;
     });
 
-    numeroTareas.forEach((input, indice) => {
-        input.value = configuracion.numTareas[indice];
+    Object.values(configuracion.numeroTareas).forEach((numero, indice) => {
+        numeroTareas[indice].value = numero;
     });
 
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-    cargarFormulario();
+    if(!localStorage.getItem("formulario")){
+        cargarFormulario();
+    }else{
+        estado = "tablero";
+    }
 });
+
+const generarKanban = (numColumnas) => {
+    formulario.remove();
+    let tablero = document.getElementById("tablero");
+
+    tablero.style.gridTemplateColumns = `repeat(${numColumnas}, 1fr)`;
+
+
+};
