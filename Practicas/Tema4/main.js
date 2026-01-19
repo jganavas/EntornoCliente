@@ -5,6 +5,7 @@ let formulario = document.getElementById("formulario");
 let estado = "creacion";
 let num = 1;
 //localStorage.clear();
+
 const formularioTemporal = {
     nombres: {},
     numeroTareas: {}
@@ -34,6 +35,7 @@ formulario.addEventListener("submit", (e) => {
     if(estado === "configuracion" && inputsValidados()){
         localStorage.removeItem("formularioTemporal");
         guardarEnMemoria(numColumnas);
+        generarKanban(numColumnas);
     }
 
 });
@@ -191,16 +193,63 @@ const cargarFormulario = () => {
 window.addEventListener("DOMContentLoaded", () => {
     if(!localStorage.getItem("formulario")){
         cargarFormulario();
-    }else{
-        estado = "tablero";
     }
 });
 
 const generarKanban = (numColumnas) => {
+
     formulario.remove();
     let tablero = document.getElementById("tablero");
 
     tablero.style.gridTemplateColumns = `repeat(${numColumnas}, 1fr)`;
 
+    let datosFormulario = JSON.parse(localStorage.getItem("formulario"));
+
+    Object.values(datosFormulario.nombres).forEach((nombre) => {
+        let div = document.createElement("div");
+        div.classList.add("celda-nombre");
+
+        div.innerText = nombre;
+
+        tablero.appendChild(div);
+    });
+
+    for (let i = 0; i < numColumnas; i++) {
+      let div = document.createElement("div");
+      div.classList.add("celda-tareas");
+      tablero.appendChild(div);
+    }
+    
+    for (let i = 0; i < numColumnas; i++) {
+      let div = document.createElement("div");
+      div.classList.add("celda-botones");
+      tablero.appendChild(div);
+    }
+
+    let dataInputColumna = 1;
+    let dataButtonColumna = 1;
+
+    let celdasBotones = document.querySelectorAll(".celda-botones");
+    celdasBotones.forEach(celda => {
+        let inputTexto = generarInput();
+        inputTexto.setAttribute("placeholder", "Describe la tarea");
+        inputTexto.dataset.columna = dataInputColumna++;
+
+        let boton = document.createElement("button");
+        boton.innerText = "Añadir tarea";
+        boton.dataset.columna = dataButtonColumna++;
+
+        celda.appendChild(inputTexto);
+        celda.appendChild(boton);
+    });
+
+    let botones = document.getElementsByTagName("button");
+    botones.forEach(boton => {
+        boton.addEventListener("click", () => {
+            
+        });
+    });
+
 
 };
+
