@@ -35,7 +35,6 @@ formulario.addEventListener("submit", (e) => {
     if(estado === "configuracion" && inputsValidados()){
         localStorage.removeItem("formularioTemporal");
         guardarEnMemoria(numColumnas);
-        generarKanban(numColumnas);
     }
 
 });
@@ -194,6 +193,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if(!localStorage.getItem("formulario")){
         cargarFormulario();
     }
+    estado = "tablero";
 });
 
 const generarKanban = (numColumnas) => {
@@ -215,41 +215,71 @@ const generarKanban = (numColumnas) => {
     });
 
     for (let i = 0; i < numColumnas; i++) {
-      let div = document.createElement("div");
-      div.classList.add("celda-tareas");
-      tablero.appendChild(div);
+        let div = document.createElement("div");
+        div.classList.add("celda-tareas");
+        tablero.appendChild(div);
     }
     
     for (let i = 0; i < numColumnas; i++) {
-      let div = document.createElement("div");
-      div.classList.add("celda-botones");
-      tablero.appendChild(div);
-    }
+        let div = document.createElement("div");
+        div.classList.add("celda-botones");
 
-    let dataInputColumna = 1;
-    let dataButtonColumna = 1;
-
-    let celdasBotones = document.querySelectorAll(".celda-botones");
-    celdasBotones.forEach(celda => {
         let inputTexto = generarInput();
         inputTexto.setAttribute("placeholder", "Describe la tarea");
-        inputTexto.dataset.columna = dataInputColumna++;
 
         let boton = document.createElement("button");
         boton.innerText = "Añadir tarea";
-        boton.dataset.columna = dataButtonColumna++;
 
-        celda.appendChild(inputTexto);
-        celda.appendChild(boton);
-    });
+        div.appendChild(inputTexto);
+        div.appendChild(boton);
 
-    let botones = document.getElementsByTagName("button");
-    botones.forEach(boton => {
         boton.addEventListener("click", () => {
+            let textoTarea = inputTexto.value;
+            if(textoTarea === ""){
+                alert("No se permiten tareas vacias");
+                return;
+            }
+            
+            let tarea = document.createElement("p");
+            tarea.classList.add("tarea");
+            tarea.innerText = textoTarea;
+
+            let contenedorTareas = document.querySelectorAll(".celda-tareas")[i];
+            contenedorTareas.appendChild(tarea);
+
+            guardarTarea(tarea, i);
+
+            inputTexto.value = "";
             
         });
-    });
-
+        
+        tablero.appendChild(div);
+    }
 
 };
 
+if(localStorage.getItem("formulario")){
+    let formulario = JSON.parse(localStorage.getItem("formulario"));
+    let numColumnas = formulario.numColumnas;
+    generarKanban(numColumnas);
+    cargarTareas(formulario);
+}
+
+const guardarTarea = (tarea, columna) => {
+
+    let memoria = JSON.parse(localStorage.getItem("formulario"));
+    let cantTareas = memoria.tareas.length();
+    //plantear
+    memoria.tareas.setItem(`tarea ${cantTareas++ }columna${columna}`, tarea);
+
+};
+
+//plantear
+const cargarTareas = (formulario) => {
+    let tareas = formulario.getItem("tareas");
+
+    tareas.forEach(tarea => {
+        
+    });
+
+};

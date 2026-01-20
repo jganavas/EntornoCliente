@@ -85,3 +85,11 @@ body{
         border: 1px solid black;
     }
 }
+
+.tarea{
+    padding: 5%;
+    text-align: center;
+    background-color: brown;
+    margin-bottom: 3%;
+    font-size: 15px;
+}
