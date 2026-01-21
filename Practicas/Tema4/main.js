@@ -31,10 +31,9 @@ formulario.addEventListener("submit", (e) => {
 
     if(estado === "configuracion" && inputsValidados()){
         localStorage.removeItem("formularioTemporal");
-        guardarEnMemoria(2);
+        guardarEnMemoria(numColumnas);
         let formulario = localStorage.getItem("formulario");
-        console.log(Object.keys(formulario));
-        generarKanban(2);
+        generarKanban(numColumnas);
     }
 
 });
@@ -49,6 +48,8 @@ const guardarFormularioTemporal = () => {
 
     let inputsNombre = document.querySelectorAll(".input-nombre");
     let inputsCantidad = document.querySelectorAll(".input-cantidad-tareas");
+
+    formularioTemporal.numColumnas = inputsNombre.length;
 
     for (let i = 0; i < inputsNombre.length; i++) {
         formularioTemporal.nombres[`nombreCol ${i+1}`] = inputsNombre[i].value;
@@ -199,32 +200,53 @@ window.addEventListener("DOMContentLoaded", () => {
 
 const guardarTarea = (tarea, columna) => {
 
-    let formulario = JSON.parse(localStorage.getItem("formulario"));
-    let numColumnas = formulario.numColumnas;
+    let tareasCol = Object.keys(tareas[columna+1]).length;
 
-    for (let i = 0; i < numColumnas; i++) {
-        formulario[i+1] = {};
-    }
+    tareas[columna+1][`tarea ${++tareasCol}`] = tarea.innerText;
 
-    let tareasCol = Object.keys(formulario[columna+1]).length;
-
-    formulario[columna+1][`tarea ${++tareasCol}`] = tarea.innerText;
-
-    localStorage.setItem("formulario", JSON.stringify(formulario));
+    localStorage.setItem("tareas", JSON.stringify(tareas));
 
 };
 
+let tareas = {};
+
+const cargarTareas = (numColumnas) => {
+    let tareillas = JSON.parse(localStorage.getItem("tareas"));
+    
+    if (!tareillas) {
+        for (let i = 0; i < numColumnas; i++) {
+            tareas[i+1] = {};
+        }
+        localStorage.setItem("tareas", JSON.stringify(tareas));
+        return; 
+    }
+
+    
+    tareas = tareillas;
+
+    let contenedoresTareas = document.querySelectorAll(".celda-tareas");
+
+    Object.keys(tareas).forEach((columna, indice) => {
+        let tareasColumn = tareas[columna];
+        Object.values(tareasColumn).forEach(tarea => {
+            let p = document.createElement("p");
+            p.classList.add("tarea");
+            p.innerText = tarea;
+
+            contenedoresTareas[indice].appendChild(p);
+        });
+    });
+
+};
 
 const generarKanban = (numColumnas) => {
     let datosFormulario = JSON.parse(localStorage.getItem("formulario"));
-    console.log(Object.keys(datosFormulario));
+
     formulario.remove();
     let tablero = document.getElementById("tablero");
 
     tablero.style.gridTemplateColumns = `repeat(${numColumnas}, 1fr)`;
 
-    //let datosFormulario = JSON.parse(localStorage.getItem("formulario"));
-    console.log(Object.keys(datosFormulario));
     Object.values(datosFormulario.nombres).forEach((nombre) => {
         let div = document.createElement("div");
         div.classList.add("celda-nombre");
@@ -268,7 +290,6 @@ const generarKanban = (numColumnas) => {
             let contenedorTareas = document.querySelectorAll(".celda-tareas")[i];
             contenedorTareas.appendChild(tarea);
 
-            console.log(tarea.innerText);
             guardarTarea(tarea, i);
 
             inputTexto.value = "";
@@ -278,19 +299,14 @@ const generarKanban = (numColumnas) => {
         tablero.appendChild(div);
     }
 
+    cargarTareas(numColumnas);
+
 };
 
 if(localStorage.getItem("formulario")){
     let formulario = JSON.parse(localStorage.getItem("formulario"));
     let numColumnas = formulario.numColumnas;
     generarKanban(numColumnas);
-
-    //cargarTareas(formulario);
 }
 
-/*
-const cargarTareas = (formulario) => {
-    let tareas = formulario.getItem("tareas");
 
-};
-*/
