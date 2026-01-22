@@ -40,6 +40,15 @@ formulario.addEventListener("submit", (e) => {
 
 formulario.addEventListener("change", (e) => {
     if (estado === "configuracion") {
+        
+        const regex = /^([1-9]|1[0-9]|20)$/;
+        if(e.target.classList.contains("input-cantidad-tareas")){
+            if(!regex.test(e.target.value)){
+                alert("El numero de tareas es incorrecto");
+                e.target.focus();
+                return false;
+            }
+        }
         guardarFormularioTemporal();      
     }
 });
@@ -127,16 +136,28 @@ const inputsValidados = () => {
     });
 
     let inputsNombre = document.querySelectorAll(".input-nombre");
-    let camposVacios = false;
+    let inputsCantidad = document.querySelectorAll(".input-cantidad-tareas");
+    let camposNoValidos = false;
 
     inputsNombre.forEach((input) => {
         if(input.value.trim() === ""){
-            camposVacios = true;
+            camposNoValidos = true;
         }
     });
 
-    if(camposVacios){
-        alert("No se permiten campos vacíos en los nombres");
+    inputsCantidad.forEach((input) => {
+        if(input.value.trim() === ""){
+            camposNoValidos = true;
+        }
+
+        if(!regex.test(input.value)){
+            camposNoValidos = true;
+        }
+
+    });
+
+    if(camposNoValidos){
+        alert("Los campos no son validos");
         return false;
     }
 
@@ -267,20 +288,30 @@ const dragndrop = () => {
         contenedor.addEventListener("drop", (e) => {
 
             let tareasMemoria = JSON.parse(localStorage.getItem("tareas"));
+            let formulario = JSON.parse(localStorage.getItem("formulario"));
 
             let numTarea = tarea.getAttribute("data-tarea-numero");
             let tareaAMover = tareasMemoria[columna][`tarea ${numTarea}`];
 
             let contenedorAMover = e.target.closest(".celda-tareas").getAttribute("data-columna");
 
-            let cantTareasColumna = Object.keys(tareasMemoria[contenedorAMover]).length;
+            let tareasMax = formulario.numeroTareas[`tareasCol ${contenedorAMover}`];
+            let numeroTareas = Object.keys(tareasMemoria[contenedorAMover]).length;
             
-            tarea.setAttribute("data-tarea-numero", cantTareasColumna++);
+            if(numeroTareas >= tareasMax){
+                alert(`No se permiten mas tareas ansias que eres un ansias`);
+                return;
+            }
+
+            delete tareasMemoria[columna][`tarea ${numTarea}`];
+
+            let cantTareasColumna = Object.keys(tareasMemoria[contenedorAMover]).length;
+            tarea.setAttribute("data-tarea-numero", ++cantTareasColumna);
+            tarea.setAttribute("data-columna", contenedorAMover);
 
             contenedorcillos[contenedorAMover-1].appendChild(tarea);
 
-            tareasMemoria[contenedorAMover][`tarea ${cantTareasColumna}`] = tareasMemoria[columna][`tarea ${numTarea}`];
-            delete tareasMemoria[columna][`tarea ${numTarea}`];
+            tareasMemoria[contenedorAMover][`tarea ${cantTareasColumna}`] = tareaAMover;
 
             localStorage.setItem("tareas", JSON.stringify(tareasMemoria));
 
@@ -333,6 +364,14 @@ const generarKanban = (numColumnas) => {
             let textoTarea = inputTexto.value;
             if(textoTarea === ""){
                 alert("No se permiten tareas vacias");
+                return;
+            }
+
+            let tareasMax = datosFormulario.numeroTareas[`tareasCol ${i+1}`];
+            let numeroTareas = Object.keys(tareas[i+1]).length;
+            
+            if(numeroTareas >= tareasMax){
+                alert(`No se permiten mas tareas ansias que eres un ansias`);
                 return;
             }
             
