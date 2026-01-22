@@ -249,7 +249,6 @@ const dragndrop = () => {
     let tarea = "";
     let columna = 0;
 
-    let tareasMemoria = JSON.parse(localStorage.getItem("tareas"));
     let contenedorcillos = document.querySelectorAll(".celda-tareas");
 
     contenedorcillos.forEach(contenedor => {
@@ -267,18 +266,21 @@ const dragndrop = () => {
 
         contenedor.addEventListener("drop", (e) => {
 
+            let tareasMemoria = JSON.parse(localStorage.getItem("tareas"));
+
             let numTarea = tarea.getAttribute("data-tarea-numero");
             let tareaAMover = tareasMemoria[columna][`tarea ${numTarea}`];
 
             let contenedorAMover = e.target.closest(".celda-tareas").getAttribute("data-columna");
 
-            let cantTareasColumna = tareasMemoria[contenedorAMover].length;
+            let cantTareasColumna = Object.keys(tareasMemoria[contenedorAMover]).length;
+            
             tarea.setAttribute("data-tarea-numero", cantTareasColumna++);
 
             contenedorcillos[contenedorAMover-1].appendChild(tarea);
 
-            tareasMemoria[columna][`tarea ${numTarea}`] = "";
-            tareasMemoria[contenedorAMover][`tarea ${cantTareasColumna}`];
+            tareasMemoria[contenedorAMover][`tarea ${cantTareasColumna}`] = tareasMemoria[columna][`tarea ${numTarea}`];
+            delete tareasMemoria[columna][`tarea ${numTarea}`];
 
             localStorage.setItem("tareas", JSON.stringify(tareasMemoria));
 
@@ -308,6 +310,7 @@ const generarKanban = (numColumnas) => {
     for (let i = 0; i < numColumnas; i++) {
         let div = document.createElement("div");
         div.classList.add("celda-tareas");
+        div.setAttribute("data-columna", i+1);
         tablero.appendChild(div);
     }
     
