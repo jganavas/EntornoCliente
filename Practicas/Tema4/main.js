@@ -228,13 +228,62 @@ const cargarTareas = (numColumnas) => {
 
     Object.keys(tareas).forEach((columna, indice) => {
         let tareasColumn = tareas[columna];
+        let itTareas = 1;
         Object.values(tareasColumn).forEach(tarea => {
             let p = document.createElement("p");
             p.classList.add("tarea");
+            p.setAttribute("data-columna", indice+1);
+            p.setAttribute("data-tarea-numero", itTareas++);
             p.innerText = tarea;
+            p.setAttribute("draggable", "true");
 
+            contenedoresTareas[indice].setAttribute("data-columna", indice+1);
             contenedoresTareas[indice].appendChild(p);
         });
+    });
+
+};
+
+const dragndrop = () => {
+
+    let tarea = "";
+    let columna = 0;
+
+    let tareasMemoria = JSON.parse(localStorage.getItem("tareas"));
+    let contenedorcillos = document.querySelectorAll(".celda-tareas");
+
+    contenedorcillos.forEach(contenedor => {
+
+        contenedor.addEventListener("dragstart", (e) => {
+            if(e.target.tagName === "P"){
+                tarea = e.target;
+                columna = e.target.getAttribute("data-columna");
+            }
+        });
+
+        contenedor.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        contenedor.addEventListener("drop", (e) => {
+
+            let numTarea = tarea.getAttribute("data-tarea-numero");
+            let tareaAMover = tareasMemoria[columna][`tarea ${numTarea}`];
+
+            let contenedorAMover = e.target.closest(".celda-tareas").getAttribute("data-columna");
+
+            let cantTareasColumna = tareasMemoria[contenedorAMover].length;
+            tarea.setAttribute("data-tarea-numero", cantTareasColumna++);
+
+            contenedorcillos[contenedorAMover-1].appendChild(tarea);
+
+            tareasMemoria[columna][`tarea ${numTarea}`] = "";
+            tareasMemoria[contenedorAMover][`tarea ${cantTareasColumna}`];
+
+            localStorage.setItem("tareas", JSON.stringify(tareasMemoria));
+
+        });
+
     });
 
 };
@@ -274,6 +323,8 @@ const generarKanban = (numColumnas) => {
 
         div.appendChild(inputTexto);
         div.appendChild(boton);
+    
+        let itTareas = 1;
 
         boton.addEventListener("click", () => {
             let textoTarea = inputTexto.value;
@@ -284,11 +335,14 @@ const generarKanban = (numColumnas) => {
             
             let tarea = document.createElement("p");
             tarea.classList.add("tarea");
-            tarea.classList.add(i+1);
+            tarea.setAttribute("data-columna", i+1);
+            tarea.setAttribute("data-tarea-numero", itTareas++);
             tarea.innerText = textoTarea;
+            tarea.setAttribute("draggable", "true");
 
             let contenedorTareas = document.querySelectorAll(".celda-tareas")[i];
             contenedorTareas.appendChild(tarea);
+            contenedorTareas.setAttribute("data-columna", i+1);
 
             guardarTarea(tarea, i);
 
@@ -300,6 +354,7 @@ const generarKanban = (numColumnas) => {
     }
 
     cargarTareas(numColumnas);
+    dragndrop();
 
 };
 
